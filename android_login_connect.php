@@ -14,8 +14,8 @@ class Android_login_connect
 		echo DB_DATABASE;
 		exit;
 
-		$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-		return $this->conn;
+		//$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
+		//return $this->conn;
 	}
 
 	public function VerifyUserAuthentication($email, $password) 
@@ -58,3 +58,5 @@ class Android_login_connect
 		}
 	}
 }
+
+?>
