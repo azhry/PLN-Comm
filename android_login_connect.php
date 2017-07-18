@@ -9,7 +9,7 @@ class Android_login_connect
 		require_once "Android_login_config.php";
 
 		$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-		//var_dump($this->conn);
+		var_dump($this->conn);
 		return $this->conn;
 	}
 
