@@ -13,9 +13,9 @@ class Android_login_connect
 		//require_once "Android_login_config.php";
 
 		//$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-		if ($this->conn->connect_error)
+		if (mysqli_connect_error())
 		{
-			die($this->conn->connect_errno . ": " . $this->conn->connect_error);
+			die(mysqli_connect_error());
 		}
 		return $this->conn;
 	}

@@ -1,9 +1,5 @@
 <?php 
-require_once "Android_login_connect.php";
-$db = new Android_login_connect();
-$db->connect();
-
-/*header("Content-type: text/html");
+header("Content-type: text/html");
 require_once "Android_login_connect.php";
 $db = new Android_login_connect();
 $db->connect();
@@ -31,7 +27,6 @@ else
 {
 	$user = $db->VerifyUserAuthentication("arliansyah_azhary@yahoo.com", md5("4kuGanteng"));
 	var_dump($user);
-	echo "hahahahaaa";
 	$response["error"] 		= TRUE;
 	$response["error_msg"] 	= "Required parameters email or password is missing!";
 }
@@ -40,6 +35,4 @@ echo json_encode($response);
 
 // Output
 // {"error":false,"user":{"user_id": 1234, "email": "arliansyah_azhary@yahoo.com"}}*/
-
-echo "HEHE";
 ?>
