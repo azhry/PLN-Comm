@@ -27,18 +27,17 @@ class Android_login_connect
 		{
 			mysqli_stmt_bind_param($stmt, "s", $email);
 			
-			if (mysqli_stmt_execute($stmt))
-			{
-				mysqli_stmt_bind_result($stmt, $token, $token2, $token3, $token4);
-				mysqli_stmt_fetch($stmt);
-				$user['user_id']	= $token;
-				$user["email"] 		= $token2;
-				$user["password"]	= $token3;
-				$user["name"]		= $token4;
-				mysqli_stmt_close($stmt);
+			mysqli_stmt_execute($stmt) or die(mysqli_stmt_error($stmt)); 
+			
+			mysqli_stmt_bind_result($stmt, $token, $token2, $token3, $token4);
+			mysqli_stmt_fetch($stmt);
+			$user['user_id']	= $token;
+			$user["email"] 		= $token2;
+			$user["password"]	= $token3;
+			$user["name"]		= $token4;
+			mysqli_stmt_close($stmt);
 
-				if ($password === $token3) return $user;
-			}
+			if ($password === $token3) return $user;
 		}
 
 		return NULL;
