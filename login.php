@@ -25,6 +25,7 @@ if (isset($_POST['email'], $_POST['password']))
 }
 else
 {
+	$user = $db->VerifyUserAuthentication("aaa", "bbbb");
 	$response["error"] 		= TRUE;
 	$response["error_msg"] 	= "Required parameters email or password is missing!";
 }
