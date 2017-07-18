@@ -6,8 +6,9 @@ class Android_login_connect
 
 	public function connect() 
 	{
-		$this->conn=mysqli_init(); mysqli_ssl_set($con, NULL, NULL, "BaltimoreCyberTrustRoot.crt", NULL, NULL); 
-		mysqli_real_connect($con, "pln-comm.mysql.database.azure.com", "azhary@pln-comm", "4kuGanteng", {"db_pln_comm", 3306);
+		$this->conn = mysqli_init(); 
+		mysqli_ssl_set($this->conn, NULL, NULL, "BaltimoreCyberTrustRoot.crt", NULL, NULL); 
+		mysqli_real_connect($this->conn, "pln-comm.mysql.database.azure.com", "azhary@pln-comm", "4kuGanteng", {"db_pln_comm", 3306);
 		
 		//require_once "Android_login_config.php";
 
