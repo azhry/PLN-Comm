@@ -1,4 +1,5 @@
 <?php 
+require_once "Android_login_connect.php";
 $db = new Android_login_connect();
 $db->connect();
 
