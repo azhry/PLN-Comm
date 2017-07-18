@@ -1,4 +1,5 @@
 <?php 
+header("Content-type: text/html");
 require_once "android_login_connect.php";
 $db = new Android_login_connect();
 $db->connect();
