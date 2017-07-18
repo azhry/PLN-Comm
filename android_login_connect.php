@@ -22,24 +22,25 @@ class Android_login_connect
 
 	public function VerifyUserAuthentication($email, $password) 
 	{
-		$stmt = $this->conn->prepare("SELECT user_id, email, password, name FROM users WHERE email = ?");
-		$stmt->bind_param("s", $email);
-		
-		if ($stmt->execute())
+		if ($stmt = mysqli_prepare($this->conn, "SELECT user_id, email, password, name FROM users WHERE email = ?"))
 		{
-			$stmt->bind_result($token, $token2, $token3, $token4);
-			while ($stmt->fetch())
+			mysqli_stmt_bind_param($stmt, "s", $email);
+			
+			if (mysqli_stmt_execute($stmt))
 			{
+				mysqli_stmt_bind_result($stmt, $token, $token2, $token3, $token4);
+				mysqli_stmt_fetch($stmt);
 				$user['user_id']	= $token;
 				$user["email"] 		= $token2;
 				$user["password"]	= $token3;
 				$user["name"]		= $token4;
-			}
-			$stmt->close();
+				mysqli_stmt_close($stmt);
 
-			if ($password === $token3) return $user;
+				if ($password === $token3) return $user;
+			}
 		}
-		else return NULL;
+
+		return NULL;
 	}
 
 	public function CheckExistingUser($email)
