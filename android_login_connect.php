@@ -6,6 +6,7 @@ class Android_login_connect
 
 	public function connect() 
 	{
+
 		$this->conn = mysqli_init(); 
 		mysqli_ssl_set($this->conn, NULL, NULL, "PLNComm.pem", NULL, NULL); 
 		mysqli_real_connect($this->conn, "pln-comm.mysql.database.azure.com", "azhary@pln-comm", "4kuGanteng", "db_pln_comm", 3306);
@@ -25,18 +26,19 @@ class Android_login_connect
 		if ($stmt = mysqli_prepare($this->conn, "SELECT user_id, email, password, name FROM users WHERE email = ?"))
 		{
 			mysqli_stmt_bind_param($stmt, "s", $email);
-			mysqli_stmt_execute($stmt)
-			mysqli_stmt_bind_result($stmt, $token, $token2, $token3, $token4);
-			mysqli_stmt_fetch($stmt);
-
-			$user['user_id']	= $token;
-			$user["email"] 		= $token2;
-			$user["password"]	= $token3;
-			$user["name"]		= $token4;
 			
-			mysqli_stmt_close($stmt);
+			if (mysqli_stmt_execute($stmt))
+			{
+				mysqli_stmt_bind_result($stmt, $token, $token2, $token3, $token4);
+				mysqli_stmt_fetch($stmt);
+				$user['user_id']	= $token;
+				$user["email"] 		= $token2;
+				$user["password"]	= $token3;
+				$user["name"]		= $token4;
+				mysqli_stmt_close($stmt);
 
-			if ($password === $token3) return $user;
+				if ($password === $token3) return $user;
+			}
 		}
 
 		return NULL;
