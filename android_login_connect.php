@@ -8,20 +8,14 @@ class Android_login_connect
 	{
 		require_once "Android_login_config.php";
 
+		echo DB_HOST;
+		echo DB_USER;
+		echo DB_PASSWORD;
+		echo DB_DATABASE;
+		exit;
+
 		$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-		/* check connection */
-		if ($this->conn->connect_errno) {
-		    printf("Connect failed: %s\n", $this->conn->connect_error);
-		    exit();
-		}
-
-		if (!$this->conn->query("SET a=1")) {
-		    printf("Errormessage: %s\n", $this->conn->error);
-		}
-
-		/* close connection */
-		$this->conn->close();
-		//return $this->conn;
+		return $this->conn;
 	}
 
 	public function VerifyUserAuthentication($email, $password) 
