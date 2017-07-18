@@ -14,17 +14,18 @@ class Android_login_connect
 
 	public function VerifyUserAuthentication($email, $password) 
 	{
-		$stmt = $this->conn->prepare("SELECT user_id, email, password FROM user WHERE email = ?");
+		$stmt = $this->conn->prepare("SELECT user_id, email, password, name FROM users WHERE email = ?");
 		$stmt->bind_param("s", $email);
 		
 		if ($stmt->execute())
 		{
-			$stmt->bind_result($token, $token2, $token3);
+			$stmt->bind_result($token, $token2, $token3, $token4);
 			while ($stmt->fetch())
 			{
 				$user['user_id']	= $token;
 				$user["email"] 		= $token2;
 				$user["password"]	= $token3;
+				$user["name"]		= $token4;
 			}
 			$stmt->close();
 
@@ -35,7 +36,7 @@ class Android_login_connect
 
 	public function CheckExistingUser($email)
 	{
-		$stmt = $this->conn->prepare("SELECT email FROM user WHERE email = ?");
+		$stmt = $this->conn->prepare("SELECT email FROM users WHERE email = ?");
 		$stmt->bind_param("s", $email);
 		$stmt->execute();
 		$stmt->store_result();
