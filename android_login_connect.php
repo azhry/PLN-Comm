@@ -36,6 +36,8 @@ class Android_login_connect
 			$user["email"] 		= $token2;
 			$user["password"]	= $token3;
 			$user["name"]		= $token4;
+			echo "WKKWWKKW: ";
+			print_r($user);
 			mysqli_stmt_close($stmt);
 
 			if ($password === $token3) return $user;
