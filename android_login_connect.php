@@ -8,14 +8,8 @@ class Android_login_connect
 	{
 		require_once "Android_login_config.php";
 
-		echo DB_HOST;
-		echo DB_USER;
-		echo DB_PASSWORD;
-		echo DB_DATABASE;
-		exit;
-
-		//$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-		//return $this->conn;
+		$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
+		return $this->conn;
 	}
 
 	public function VerifyUserAuthentication($email, $password) 
