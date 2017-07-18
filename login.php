@@ -27,6 +27,7 @@ else
 {
 	$user = $db->VerifyUserAuthentication("arliansyah_azhary@yahoo.com", md5("4kuGanteng"));
 	var_dump($user);
+	echo "hahahahaaa";
 	$response["error"] 		= TRUE;
 	$response["error_msg"] 	= "Required parameters email or password is missing!";
 }
