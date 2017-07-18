@@ -6,9 +6,12 @@ class Android_login_connect
 
 	public function connect() 
 	{
-		require_once "Android_login_config.php";
+		$this->conn=mysqli_init(); mysqli_ssl_set($con, NULL, NULL, {ca-cert filename}, NULL, NULL); 
+		mysqli_real_connect($con, "pln-comm.mysql.database.azure.com", "azhary@pln-comm", "4kuGanteng", {"db_pln_comm", 3306);
+		
+		//require_once "Android_login_config.php";
 
-		$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
+		//$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 		if ($this->conn->connect_error)
 		{
 			die($this->conn->connect_errno . ": " . $this->conn->connect_error);
