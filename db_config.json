@@ -1,0 +1,29 @@
+{
+  "administratorLogin": "azhary",
+  "fullyQualifiedDomainName": "pln-comm.mysql.database.azure.com",
+  "id": "/subscriptions/81cbf5a0-be84-479a-bc24-705662231797/resourceGroups/pln-comm/providers/Microsoft.DBforMySQL/servers/pln-comm",
+  "location": "northeurope",
+  "name": "pln-comm",
+  "resourceGroup": "pln-comm",
+  "sku": {
+    "capacity": 100,
+    "family": null,
+    "name": "MYSQLB100",
+    "size": null,
+    "tier": "Basic"
+  },
+  "sslEnforcement": "Enabled",
+  "storageMb": 51200,
+  "tags": null,
+  "type": "Microsoft.DBforMySQL/servers",
+  "userVisibleState": "Ready",
+  "version": "5.7"
+},
+{
+  "endIpAddress": "255.255.255.255",
+  "id": "/subscriptions/81cbf5a0-be84-479a-bc24-705662231797/resourceGroups/pln-comm/providers/Microsoft.DBforMySQL/servers/pln-comm/firewallRules/allIPs",
+  "name": "allIPs",
+  "resourceGroup": "pln-comm",
+  "startIpAddress": "0.0.0.0",
+  "type": "Microsoft.DBforMySQL/servers/firewallRules"
+}
