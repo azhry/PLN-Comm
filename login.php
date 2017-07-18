@@ -1,5 +1,5 @@
 <?php 
-header("Content-type: text/html");
+/*header("Content-type: text/html");
 require_once "Android_login_connect.php";
 $db = new Android_login_connect();
 $db->connect();
@@ -35,4 +35,6 @@ else
 echo json_encode($response);
 
 // Output
-// {"error":false,"user":{"user_id": 1234, "email": "arliansyah_azhary@yahoo.com"}}
+// {"error":false,"user":{"user_id": 1234, "email": "arliansyah_azhary@yahoo.com"}}*/
+
+echo phpinfo();
