@@ -31,6 +31,7 @@ class Android_login_connect
 			
 			mysqli_stmt_bind_result($stmt, $token, $token2, $token3, $token4);
 			mysqli_stmt_fetch($stmt);
+			echo $token . " " . $token2 . " " . $token3 . " " . $token4;
 			$user['user_id']	= $token;
 			$user["email"] 		= $token2;
 			$user["password"]	= $token3;
