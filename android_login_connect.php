@@ -23,6 +23,7 @@ class Android_login_connect
 
 	public function VerifyUserAuthentication($email, $password) 
 	{
+		echo "hehehe";
 		if ($stmt = mysqli_prepare($this->conn, "SELECT user_id, email, password, name FROM users WHERE email = ?"))
 		{
 			mysqli_stmt_bind_param($stmt, "s", $email);
