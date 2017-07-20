@@ -23,25 +23,16 @@ class Android_login_connect
 
 	public function VerifyUserAuthentication($email, $password) 
 	{
-		echo "hehehe";
-		if ($stmt = mysqli_prepare($this->conn, "SELECT user_id, email, password, name FROM users WHERE email = ?"))
+		$sql = "SELECT * FROM users WHERE email='" . $email . "' AND password='" . $password ."'";
+		$query = mysqli_query($this->conn, $sql);
+		$user = [];
+		while ($row = mysqli_fetch_array($query))
 		{
-			mysqli_stmt_bind_param($stmt, "s", $email);
-			
-			mysqli_stmt_execute($stmt) or die(mysqli_stmt_error($stmt)); 
-			
-			mysqli_stmt_bind_result($stmt, $token, $token2, $token3, $token4);
-			mysqli_stmt_fetch($stmt);
-			echo $token . " " . $token2 . " " . $token3 . " " . $token4;
-			$user['user_id']	= $token;
-			$user["email"] 		= $token2;
-			$user["password"]	= $token3;
-			$user["name"]		= $token4;
-			echo "WKKWWKKW: ";
-			print_r($user);
-			mysqli_stmt_close($stmt);
+			$user['user_id'] 	= $row['user_id'];
+			$user['email']		= $row['email'];
+			$user['name']		= $row['name'];
 
-			if ($password === $token3) return $user;
+			return $user;
 		}
 
 		return NULL;
