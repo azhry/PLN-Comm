@@ -20,16 +20,11 @@ class Android_login_connect
 	public function VerifyUserAuthentication($email, $password) 
 	{
 		$sql = "SELECT * FROM users WHERE email='" . $email . "' AND password='" . $password ."'";
-		echo $sql;
 		$query = mysqli_query($this->conn, $sql);
-		var_dump($query);
 		$user = [];
 		while ($row = mysqli_fetch_array($query))
 		{
-			$user['user_id'] 	= $row['user_id'];
-			$user['email']		= $row['email'];
-			$user['name']		= $row['name'];
-
+			$user []= $row;
 			return $user;
 		}
 
