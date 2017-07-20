@@ -21,10 +21,11 @@ class Android_login_connect
 	{
 		$sql = "SELECT * FROM users WHERE email='" . $email . "' AND password='" . $password ."'";
 		$query = mysqli_query($this->conn, $sql);
-		$user = [];
 		while ($row = mysqli_fetch_array($query))
 		{
-			$user []= $row;
+			$user['user_id']	= $row['USER_ID'];
+			$user['email']		= $row['EMAIL'];
+			$user['name']		= $row['NAME'];
 			return $user;
 		}
 
