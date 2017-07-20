@@ -14,7 +14,7 @@ class Android_login_connect
 		//require_once "Android_login_config.php";
 
 		//$this->conn = new Mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
-		if (mysqli_connect_error())
+		if (!$this->conn)
 		{
 			die(mysqli_connect_error());
 		}
@@ -24,6 +24,7 @@ class Android_login_connect
 	public function VerifyUserAuthentication($email, $password) 
 	{
 		$sql = "SELECT * FROM users WHERE email='" . $email . "' AND password='" . $password ."'";
+		echo $sql;
 		$query = mysqli_query($this->conn, $sql);
 		$user = [];
 		while ($row = mysqli_fetch_array($query))
