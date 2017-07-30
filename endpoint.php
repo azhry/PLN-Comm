@@ -32,9 +32,18 @@ switch ($_SERVER['REQUEST_METHOD'])
 			case 'get_todo_list':
 				
 				$user_id 	= $_GET['user_id'];
-				$todo_lists = DBHelper::select('todo_lists', ['*'], [
+				$todo_list_id = DBHelper::select('list_access', ['LIST_ID'], [
 					'USER_ID' => $user_id
 				]);
+
+
+				$todo_lists = [];
+				foreach ($todo_list_id as $list_id)
+				{
+					$todo_lists []= DBHelper::select_row('todo_lists', ['*'], [
+						'LIST_ID'	=> $list_id['LIST_ID']
+					]);
+				}
 
 				echo json_encode($todo_lists);
 
@@ -63,7 +72,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 					$email 		= $_POST['email'];
 					$password 	= md5($_POST['password']);
 					
-					$user 		= DBHelper::select_row('user', ['*'], [
+					$user 		= DBHelper::select_row('users', ['*'], [
 						'EMAIL'		=> $email,
 						'PASSWORD'	=> $password
 					]);
@@ -99,7 +108,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 				do
 				{
 					$list_id 	= mt_rand();
-					$is_duplicate = DBHelper::select_row('todo_lists', [
+					$is_duplicate = DBHelper::select_row('todo_lists', ['*'], [
 						'LIST_ID'	=> $list_id
 					]);
 				}
@@ -115,14 +124,20 @@ switch ($_SERVER['REQUEST_METHOD'])
 					exit;
 				}
 
-				if (!DBHelper::insert('todo_access'))
+				if (!DBHelper::insert('list_access', [
+						'USER_ID'		=> $user_id,
+						'LIST_ID'		=> $list_id,
+						'ACCESS_TYPE'	=> 0
+					]))
 				{
 					$response['status'] = 2;
 					echo json_encode($response);
 					exit;
 				}
 
-				$response['status'] = 0;
+				$response['status'] 	= 0;
+				$response['list_id']	= $list_id;
+				$response['list_name']	= $list_name;
 				echo json_encode($response);
 
 				exit;
@@ -148,7 +163,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 					exit;
 				}
 
-				if (!DBHelper::update('list_access', [
+				if (!DBHelper::update('todo_lists', [
 						'LIST_NAME'	=> $new_list_name
 					], [
 						'LIST_ID'	=> $list_id
@@ -176,6 +191,10 @@ switch ($_SERVER['REQUEST_METHOD'])
 					'USER_ID'	=> $user_id,
 					'LIST_ID'	=> $list_id
 				]);
+				$response['list_name'] = DBHelper::select_row('todo_lists', ['LIST_NAME'], [
+					'LIST_ID' => $list_id
+				]);
+				$response['list_name'] = $response['list_name']['LIST_NAME'];
 
 				if ($list_access['ACCESS_TYPE'] != 0)
 				{
@@ -193,8 +212,16 @@ switch ($_SERVER['REQUEST_METHOD'])
 					exit;
 				}
 
+				if (!DBHelper::delete('list_access', [
+						'LIST_ID'	=> $list_id
+					]))
+				{
+					$response['status'] = 2;
+					echo json_encode($response);
+					exit;
+				}				
+
 				if (!DBHelper::delete('todo_lists', [
-						'USER_ID'	=> $user_id,
 						'LIST_ID'	=> $list_id
 					]))
 				{
@@ -203,7 +230,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 					exit;
 				}
 
-				$response['status'] = 0;
+				$response['status'] 	= 0;
 				echo json_encode($response);
 
 				exit;
