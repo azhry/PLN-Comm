@@ -51,7 +51,13 @@ switch ($_SERVER['REQUEST_METHOD'])
 
 			case 'get_todo_item':
 
-				
+				$list_id = $_GET['list_id'];
+
+				$todo_items = DBHelper::select('todo_items', ['TODO_ID', 'ITEM_DESC', 'IS_COMPLETED'], [
+					'LIST_ID'	=> $list_id
+				]);
+
+				echo json_encode($todo_items);
 
 				exit;
 		}		
@@ -143,7 +149,50 @@ switch ($_SERVER['REQUEST_METHOD'])
 				exit;
 
 			case 'insert_todo_item':
-				break;
+				
+				do
+				{
+					$task_id = mt_rand();
+					$is_duplicate = DBHelper::select_row('todo_items', ['TODO_ID'], [
+						'TODO_ID'	=> $task_id
+					]);
+				}
+				while ($is_duplicate);
+
+				$insert_type = $_POST['insert_type'];
+				switch ($insert_type)
+				{
+					case 'quick_add':
+						
+						$task_name 	= $_POST['task_name'];
+						$list_id 	= $_POST['list_id'];
+						$completed 	= 0;
+
+						if (!DBHelper::insert('todo_items', [
+								'TODO_ID'		=> $task_id,
+								'LIST_ID'		=> $list_id,
+								'ITEM_DESC'		=> $task_name,
+								'IS_COMPLETED'	=> $completed
+							]))
+						{
+							$response['status'] = 1;
+							echo json_encode($response);
+							exit;
+						}
+
+						$response['status'] = 0;
+						echo json_encode($response);	
+
+						exit;
+					
+					case 'regular_add':
+						exit;
+				}
+
+				$response['status'] = 2;
+				echo json_encode($response);
+
+				exit;
 
 			case 'update_todo_list':
 				
