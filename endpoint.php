@@ -14,6 +14,7 @@ define("DB_DATABASE", "db_pln");
 
 require_once('DBHelper.php');
 
+
 // connect to database with DBHelper static class
 DBHelper::connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 
@@ -24,17 +25,17 @@ $response['error'] = FALSE;
 switch ($_SERVER['REQUEST_METHOD'])
 {
 	case 'GET':
-		
-		// evaluate what action is requested by client
-		$action = $_GET['action'];
-		switch ($action) 
-		{
-			case 'get_todo_list':
-				
-				$user_id 	= $_GET['user_id'];
-				$todo_list_id = DBHelper::select('list_access', ['LIST_ID'], [
-					'USER_ID' => $user_id
-				]);
+			
+			// evaluate what action is requested by client
+			$action = $_GET['action'];
+			switch ($action) 
+			{
+				case 'get_todo_list':
+					
+					$user_id 	= $_GET['user_id'];
+					$todo_list_id = DBHelper::select('list_access', ['LIST_ID'], [
+						'USER_ID' => $user_id
+					]);
 
 
 				$todo_lists = [];
@@ -58,6 +59,14 @@ switch ($_SERVER['REQUEST_METHOD'])
 				]);
 
 				echo json_encode($todo_items);
+
+				exit;
+
+			case 'get_item_details':
+
+				$todo_id = $_GET['todo_id'];
+				$todo_item = DBHelper::select_row('todo_items', ['*'], ['TODO_ID' => $todo_id]);
+				echo json_encode($todo_item);
 
 				exit;
 		}		
@@ -186,6 +195,30 @@ switch ($_SERVER['REQUEST_METHOD'])
 						exit;
 					
 					case 'regular_add':
+
+						$task_name 	= $_POST['task_name'];
+						$list_id   	= $_POST['list_id'];
+						$due_date 	= $_POST['due_date'];
+						$note		= $_POST['note'];
+						$completed 	= 0;
+
+						if (!DBHelper::insert('todo_items', [
+								'TODO_ID'		=> $task_id,
+								'LIST_ID'		=> $list_id,
+								'ITEM_DESC'		=> $task_name,
+								'DUE_DATE'		=> $due_date,
+								'NOTE'			=> $note,
+								'IS_COMPLETED'	=> $completed
+							]))
+						{
+							$response['status'] = 1;
+							echo json_encode($response);
+							exit;
+						}
+
+						$response['status'] = 0;
+						echo json_encode($response);
+
 						exit;
 				}
 
@@ -229,7 +262,31 @@ switch ($_SERVER['REQUEST_METHOD'])
 				exit;
 
 			case 'update_todo_item':
-				break;
+
+				$todo_id 	= $_POST['todo_id'];
+				$item_desc	= $_POST['item_desc'];
+				$due_date 	= $_POST['due_date'];
+				$note 		= $_POST['note'];
+				$completed 	= $_POST['completed'];
+
+				if (!DBHelper::update('todo_items', [
+						'ITEM_DESC'		=> $item_desc,
+						'DUE_DATE'		=> $due_date,
+						'NOTE'			=> $note,
+						'IS_COMPLETED'	=> $completed
+					], [
+						'TODO_ID'		=> $todo_id
+					]))
+				{
+					$response['status'] = 1;
+					echo json_encode($response);
+					exit;
+				}
+
+				$response['status'] = 0;
+				echo json_encode($response);
+
+				exit;
 
 			case 'delete_todo_list':
 
@@ -291,7 +348,12 @@ switch ($_SERVER['REQUEST_METHOD'])
 				break;
 
 			case 'upload_file':
-				break;
+				
+				$file_path = 'uploads/' . basename($_FILES['uploaded_file']['name']);
+				var_dump($_FILES);
+				move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $file_path);
+
+				exit;
 		}
 
 		break;
