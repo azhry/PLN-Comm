@@ -54,7 +54,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 
 				$list_id = $_GET['list_id'];
 
-				$todo_items = DBHelper::select('todo_items', ['TODO_ID', 'ITEM_DESC', 'IS_COMPLETED'], [
+				$todo_items = DBHelper::select('todo_items', ['TODO_ID', 'ITEM_DESC', 'IS_COMPLETED', 'LIST_ID', 'NOTE', 'DUE_DATE'], [
 					'LIST_ID'	=> $list_id
 				]);
 
@@ -64,9 +64,24 @@ switch ($_SERVER['REQUEST_METHOD'])
 
 			case 'get_item_details':
 
-				$todo_id = $_GET['todo_id'];
-				$todo_item = DBHelper::select_row('todo_items', ['*'], ['TODO_ID' => $todo_id]);
+				$todo_id 	= $_GET['todo_id'];
+				$todo_item 	= DBHelper::select_row('todo_items', ['*'], ['TODO_ID' => $todo_id]);
 				echo json_encode($todo_item);
+
+				exit;
+
+			case 'get_list_members':
+
+				$list_id 	= $_GET['list_id'];
+				$members_id = DBHelper::select('list_access', ['USER_ID'], ['LIST_ID' => $list_id]);
+				$members = [];
+				foreach ($members_id as $member_id)
+				{
+					$members []= DBHelper::select_row('users', ['USER_ID', 'EMAIL', 'NAME'], [
+						'USER_ID' => $member_id['USER_ID']
+					]);
+				}
+				echo json_encode($members);
 
 				exit;
 		}		
@@ -189,7 +204,15 @@ switch ($_SERVER['REQUEST_METHOD'])
 							exit;
 						}
 
-						$response['status'] = 0;
+						$todo_item = DBHelper::select_row('todo_items', ['*'], [
+							'TODO_ID'	=> $task_id
+						]);
+						$response['TODO_ID']	= $todo_item['TODO_ID'];
+						$response['LIST_ID']	= $todo_item['LIST_ID'];
+						$response['ITEM_DESC']	= $todo_item['ITEM_DESC'];
+						$response['NOTE']		= $todo_item['NOTE'];
+						$response['DUE_DATE']	= $todo_item['DUE_DATE'];
+						$response['status'] 	= 0;
 						echo json_encode($response);	
 
 						exit;
@@ -345,13 +368,82 @@ switch ($_SERVER['REQUEST_METHOD'])
 				break;
 
 			case 'share_todo_list':
-				break;
+				
+				$email = $_POST['email'];
+				$user = DBHelper::select_row('users', ['USER_ID'], ['EMAIL' => $email]);
+				if (!$user)
+				{
+					$response['status'] = 1; // user not found
+					echo json_encode($response);
+					exit;
+				}
+
+				$list_id = $_POST['list_id'];
+				if (DBHelper::select_row('list_access', ['USER_ID'], [
+						'USER_ID'	=> $user['USER_ID'],
+						'LIST_ID'	=> $list_id
+					]))
+				{
+					$response['status'] = 2; // already member
+					echo json_encode($response);
+					exit;
+				}
+
+				if (!DBHelper::insert('list_access', [
+						'USER_ID' 		=> $user['USER_ID'],
+						'LIST_ID'		=> $list_id,
+						'ACCESS_TYPE'	=> 1
+					]))
+				{
+					$response['status'] = 3; // insert failed
+					echo json_encode($response);
+					exit;
+				}
+
+				$user = DBHelper::select_row('users', ['USER_ID', 'EMAIL', 'NAME'], ['EMAIL' => $email]);
+				$response['USER_ID']	= $user['USER_ID'];
+				$response['EMAIL']		= $user['EMAIL'];
+				$response['NAME']		= $user['NAME'];
+				$response['status'] 	= 0;
+				echo json_encode($response);
+
+				exit;
 
 			case 'upload_file':
+
+				do
+				{
+					$file_id = mt_rand();
+					$is_duplicate = DBHelper::select_row('files', ['FILE_ID'], [
+						'FILE_ID' => $file_id
+					]);
+				}
+				while ($is_duplicate);
 				
-				$file_path = 'uploads/' . basename($_FILES['uploaded_file']['name']);
-				var_dump($_FILES);
-				move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $file_path);
+				$todo_id 	= $_POST['todo_id'];
+				$file_name	= basename($_FILES['uploaded_file']['name']);
+				$file_path 	= 'uploads/' . $file_name;
+				if (move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $file_path))
+				{
+					DBHelper::insert('files', [
+						'FILE_ID'	=> $file_id,
+						'TODO_ID'	=> $todo_id,
+						'FILENAME'	=> $file_id . '-' . $file_name
+					]);
+				}
+
+				exit;
+
+			case 'update_item_status':
+
+				$completed 	= $_POST['is_completed'];
+				$todo_id 	= $_POST['todo_id'];
+				if (!DBHelper::update('todo_items', ['IS_COMPLETED' => $completed], [
+						'TODO_ID'	=> $todo_id
+					]))
+				{
+
+				}
 
 				exit;
 		}
