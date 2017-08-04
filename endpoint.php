@@ -287,13 +287,14 @@ switch ($_SERVER['REQUEST_METHOD'])
 			case 'update_todo_item':
 
 				$todo_id 	= $_POST['todo_id'];
-				$item_desc	= $_POST['item_desc'];
+				$task_name 	= $_POST['task_name'];
+				$list_id   	= $_POST['list_id'];
 				$due_date 	= $_POST['due_date'];
-				$note 		= $_POST['note'];
-				$completed 	= $_POST['completed'];
+				$note		= $_POST['note'];
+				$completed 	= $_POST['is_completed'];
 
 				if (!DBHelper::update('todo_items', [
-						'ITEM_DESC'		=> $item_desc,
+						'ITEM_DESC'		=> $task_name,
 						'DUE_DATE'		=> $due_date,
 						'NOTE'			=> $note,
 						'IS_COMPLETED'	=> $completed
