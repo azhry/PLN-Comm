@@ -26,17 +26,16 @@ switch ($_SERVER['REQUEST_METHOD'])
 {
 	case 'GET':
 			
-			// evaluate what action is requested by client
-			$action = $_GET['action'];
-			switch ($action) 
-			{
-				case 'get_todo_list':
-					
-					$user_id 	= $_GET['user_id'];
-					$todo_list_access = DBHelper::select('list_access', ['*'], [
-						'USER_ID' => $user_id
-					]);
-
+		// evaluate what action is requested by client
+		$action = $_GET['action'];
+		switch ($action) 
+		{
+			case 'get_todo_list':
+				
+				$user_id 	= $_GET['user_id'];
+				$todo_list_access = DBHelper::select('list_access', ['*'], [
+					'USER_ID' => $user_id
+				]);
 
 				$todo_lists = [];
 				$idx = 0;
@@ -220,12 +219,13 @@ switch ($_SERVER['REQUEST_METHOD'])
 						$todo_item = DBHelper::select_row('todo_items', ['*'], [
 							'TODO_ID'	=> $task_id
 						]);
-						$response['TODO_ID']	= $todo_item['TODO_ID'];
-						$response['LIST_ID']	= $todo_item['LIST_ID'];
-						$response['ITEM_DESC']	= $todo_item['ITEM_DESC'];
-						$response['NOTE']		= $todo_item['NOTE'];
-						$response['DUE_DATE']	= $todo_item['DUE_DATE'];
-						$response['status'] 	= 0;
+						$response['TODO_ID']		= $todo_item['TODO_ID'];
+						$response['LIST_ID']		= $todo_item['LIST_ID'];
+						$response['ITEM_DESC']		= $todo_item['ITEM_DESC'];
+						$response['NOTE']			= $todo_item['NOTE'];
+						$response['DUE_DATE']		= $todo_item['DUE_DATE'];
+						$response['IS_COMPLETED']	= $todo_item['IS_COMPLETED'];
+						$response['status'] 		= 0;
 						echo json_encode($response);	
 
 						exit;
@@ -234,11 +234,9 @@ switch ($_SERVER['REQUEST_METHOD'])
 
 						$task_name 	= $_POST['task_name'];
 						$list_id   	= $_POST['list_id'];
-						$due_date 	= $_POST['due_date'] == ""? null : $_POST['due_date'];
-						$note		= $_POST['note'] == ""? null : $_POST['note'];
+						$due_date 	= !isset($_POST['due_date']) or is_null($_POST['due_date']) ? null : $_POST['due_date'];
+						$note		= !isset($_POST['note']) or is_null($_POST['note']) ? null : $_POST['note'];
 						$completed 	= 0;
-
-
 
 						if (!DBHelper::insert('todo_items', [
 								'TODO_ID'		=> $task_id,
@@ -249,12 +247,20 @@ switch ($_SERVER['REQUEST_METHOD'])
 								'IS_COMPLETED'	=> $completed
 							]))
 						{
-							$response['status'] = 1;
+							$response['status'] 			= 1;
+							$response['list_id']			= $list_id;
+							$response['generated_todo_id']	= $task_id;
 							echo json_encode($response);
 							exit;
 						}
 
-						$response['status'] = 0;
+						$response['todo_id']		= $task_id;
+						$response['list_id']		= $list_id;
+						$response['item_desc']		= $task_name;
+						$response['due_date']		= $due_date;
+						$response['note']			= $note;
+						$response['is_completed']	= $completed;
+						$response['status'] 		= 0;
 						echo json_encode($response);
 
 						exit;
