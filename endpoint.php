@@ -78,11 +78,15 @@ switch ($_SERVER['REQUEST_METHOD'])
 				$list_id 	= $_GET['list_id'];
 				$members_id = DBHelper::select('list_access', ['USER_ID', 'ACCESS_TYPE'], ['LIST_ID' => $list_id]);
 				$members = [];
+				
+				$idx = 0;
 				foreach ($members_id as $member_id)
 				{
 					$members []= DBHelper::select_row('users', ['USER_ID', 'EMAIL', 'NAME'], [
 						'USER_ID' => $member_id['USER_ID']
 					]);
+					$members[$idx]['ACCESS_TYPE'] = $member_id['ACCESS_TYPE'];
+					$idx++;
 				}
 
 				$name = array();
