@@ -76,7 +76,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 			case 'get_list_members':
 
 				$list_id 	= $_GET['list_id'];
-				$members_id = DBHelper::select('list_access', ['USER_ID'], ['LIST_ID' => $list_id]);
+				$members_id = DBHelper::select('list_access', ['USER_ID', 'ACCESS_TYPE'], ['LIST_ID' => $list_id]);
 				$members = [];
 				foreach ($members_id as $member_id)
 				{
@@ -84,6 +84,14 @@ switch ($_SERVER['REQUEST_METHOD'])
 						'USER_ID' => $member_id['USER_ID']
 					]);
 				}
+
+				$name = array();
+				foreach ($members as $key => $row)
+				{
+					$name[$key] = $row['NAME'];
+				}
+				array_multisort($name, SORT_ASC, $members);
+
 				echo json_encode($members);
 
 				exit;
