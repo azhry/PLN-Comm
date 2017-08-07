@@ -33,17 +33,20 @@ switch ($_SERVER['REQUEST_METHOD'])
 				case 'get_todo_list':
 					
 					$user_id 	= $_GET['user_id'];
-					$todo_list_id = DBHelper::select('list_access', ['LIST_ID'], [
+					$todo_list_access = DBHelper::select('list_access', ['*'], [
 						'USER_ID' => $user_id
 					]);
 
 
 				$todo_lists = [];
-				foreach ($todo_list_id as $list_id)
+				$idx = 0;
+				foreach ($todo_list_access as $list_id)
 				{
 					$todo_lists []= DBHelper::select_row('todo_lists', ['*'], [
 						'LIST_ID'	=> $list_id['LIST_ID']
 					]);
+					$todo_lists[$idx]['ACCESS_TYPE'] = $list_id['ACCESS_TYPE'];
+					$idx++;
 				}
 
 				echo json_encode($todo_lists);
