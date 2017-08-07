@@ -84,6 +84,16 @@ switch ($_SERVER['REQUEST_METHOD'])
 				echo json_encode($members);
 
 				exit;
+
+			case 'get_todo_files':
+
+				$todo_id 	= $_GET['todo_id'];
+				$files 		= DBHelper::select('files', ['*'], [
+					'TODO_ID'	=> $todo_id
+				]);
+				echo json_encode($files);
+
+				exit;
 		}		
 
 		break;
@@ -221,9 +231,11 @@ switch ($_SERVER['REQUEST_METHOD'])
 
 						$task_name 	= $_POST['task_name'];
 						$list_id   	= $_POST['list_id'];
-						$due_date 	= $_POST['due_date'];
-						$note		= $_POST['note'];
+						$due_date 	= $_POST['due_date'] == ""? null : $_POST['due_date'];
+						$note		= $_POST['note'] == ""? null : $_POST['note'];
 						$completed 	= 0;
+
+
 
 						if (!DBHelper::insert('todo_items', [
 								'TODO_ID'		=> $task_id,
@@ -279,7 +291,8 @@ switch ($_SERVER['REQUEST_METHOD'])
 					exit;
 				}
 
-				$response['status'] = 0;
+				$response['status'] 	= 0;
+				$response['list_id']	= $list_id;
 				echo json_encode($response);
 
 				exit;
@@ -289,8 +302,8 @@ switch ($_SERVER['REQUEST_METHOD'])
 				$todo_id 	= $_POST['todo_id'];
 				$task_name 	= $_POST['task_name'];
 				$list_id   	= $_POST['list_id'];
-				$due_date 	= $_POST['due_date'];
-				$note		= $_POST['note'];
+				$due_date 	= $_POST['due_date'] == ""? null : $_POST['due_date'];
+				$note		= $_POST['note'] == ""? null : $_POST['note'];
 				$completed 	= $_POST['is_completed'];
 
 				if (!DBHelper::update('todo_items', [
@@ -429,7 +442,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 					DBHelper::insert('files', [
 						'FILE_ID'	=> $file_id,
 						'TODO_ID'	=> $todo_id,
-						'FILENAME'	=> $file_id . '-' . $file_name
+						'FILENAME'	=> $file_name
 					]);
 				}
 
