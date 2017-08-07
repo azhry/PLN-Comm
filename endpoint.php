@@ -21,6 +21,29 @@ DBHelper::connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 // initialize response to be sent to client
 $response['error'] = FALSE;
 
+function sortUser($a, $b){
+	$sortName = sortUserByName($a,$b);
+	return ($sortName == 0) ? sortUserByEmail($a,$b) : $sortName;
+}
+
+function sortUserByName($a, $b)
+{
+    $a_name = strtolower($a['NAME']);
+    $b_name = strtolower($b['NAME']);
+
+    if ($a_name == $b_name) return 0;
+    return ($a_name < $b_name) ? -1 : 1;
+}
+
+function sortUserByEmail($a, $b)
+{
+	$a_email = strtolower($a['EMAIL']);
+    $b_email = strtolower($b['EMAIL']);
+
+    if ($a_email == $b_email) return 0;
+    return ($a_email < $b_email) ? -1 : 1;
+}
+
 // evaluate request method coming from client
 switch ($_SERVER['REQUEST_METHOD'])
 {
@@ -88,12 +111,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 					$idx++;
 				}
 
-				$name = array();
-				foreach ($members as $key => $row)
-				{
-					$name[$key] = $row['NAME'];
-				}
-				array_multisort($name, SORT_ASC, $members);
+				usort($members, 'sortUser');
 
 				echo json_encode($members);
 
