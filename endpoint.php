@@ -83,6 +83,22 @@ switch ($_SERVER['REQUEST_METHOD'])
 					'LIST_ID'	=> $list_id
 				]);
 
+				foreach ($todo_items as $key => $todo_item) 
+				{
+					$check_files = DBHelper::select('files', ['FILE_ID'], [
+						'TODO_ID' => $todo_item['TODO_ID']
+					]);
+					if (count($check_files) > 0) 
+					{
+						$todo_item['HAS_FILES'] = TRUE;
+					}
+					else
+					{
+						$todo_item['HAS_FILES'] = FALSE;
+					}
+					$todo_items[$key] = $todo_item;
+				}
+
 				echo json_encode($todo_items);
 
 				exit;
@@ -264,8 +280,8 @@ switch ($_SERVER['REQUEST_METHOD'])
 
 						$task_name 	= $_POST['task_name'];
 						$list_id   	= $_POST['list_id'];
-						$due_date 	= !isset($_POST['due_date']) or is_null($_POST['due_date']) ? null : $_POST['due_date'];
-						$note		= !isset($_POST['note']) or is_null($_POST['note']) ? null : $_POST['note'];
+						$due_date 	= empty($_POST['due_date']) ? null : $_POST['due_date'];
+						$note		= empty($_POST['note']) ? null : $_POST['note'];
 						$completed 	= 0;
 
 						if (!DBHelper::insert('todo_items', [
@@ -291,6 +307,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 						$response['note']			= $note;
 						$response['is_completed']	= $completed;
 						$response['status'] 		= 0;
+						$response['debug']			= $_POST;
 						echo json_encode($response);
 
 						exit;
@@ -359,7 +376,13 @@ switch ($_SERVER['REQUEST_METHOD'])
 					exit;
 				}
 
-				$response['status'] = 0;
+				$response['status'] 		= 0;
+				$response['todo_id']		= $todo_id;
+				$response['item_desc']		= $task_name;
+				$response['list_id']		= $list_id;
+				$response['due_date']		= $due_date;
+				$response['note']			= $note;
+				$response['is_completed']	= $completed;
 				echo json_encode($response);
 
 				exit;
@@ -484,6 +507,17 @@ switch ($_SERVER['REQUEST_METHOD'])
 						'FILENAME'	=> $file_name
 					]);
 				}
+
+				exit;
+
+			case 'delete_item_files':
+
+				$file_id = $_POST['file_id'];
+				$file = DBHelper::select_row('files', ['*'], ['FILE_ID' => $file_id]);
+				@unlink('uploads/' . $file['FILENAME']);
+				DBHelper::delete('files', ['FILE_ID' => $file_id]);
+				$response['status'] = 0;
+				echo json_encode($response);
 
 				exit;
 
