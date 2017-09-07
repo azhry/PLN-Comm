@@ -79,7 +79,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 
 				$list_id = $_GET['list_id'];
 
-				$todo_items = DBHelper::select('todo_items', ['TODO_ID', 'ITEM_DESC', 'IS_COMPLETED', 'LIST_ID', 'NOTE', 'DUE_DATE'], [
+				$todo_items = DBHelper::select('todo_items', ['TODO_ID', 'ITEM_DESC', 'IS_COMPLETED', 'LIST_ID', 'NOTE', 'DUE_DATE', 'ASSIGN_TO'], [
 					'LIST_ID'	=> $list_id
 				]);
 
@@ -271,6 +271,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 						$response['NOTE']			= $todo_item['NOTE'];
 						$response['DUE_DATE']		= $todo_item['DUE_DATE'];
 						$response['IS_COMPLETED']	= $todo_item['IS_COMPLETED'];
+						$response['ASSIGN_TO']		= $todo_item['ASSIGN_TO'];
 						$response['status'] 		= 0;
 						echo json_encode($response);	
 
@@ -360,13 +361,15 @@ switch ($_SERVER['REQUEST_METHOD'])
 				$list_id   	= $_POST['list_id'];
 				$due_date 	= $_POST['due_date'] == ""? null : $_POST['due_date'];
 				$note		= $_POST['note'] == ""? null : $_POST['note'];
+				$assign_to 	= $_POST['assign_to'] == "" ? null : $_POST['assign_to'];
 				$completed 	= $_POST['is_completed'];
 
 				if (!DBHelper::update('todo_items', [
 						'ITEM_DESC'		=> $task_name,
 						'DUE_DATE'		=> $due_date,
 						'NOTE'			=> $note,
-						'IS_COMPLETED'	=> $completed
+						'IS_COMPLETED'	=> $completed,
+						'ASSIGN_TO'		=> $assign_to
 					], [
 						'TODO_ID'		=> $todo_id
 					]))
@@ -382,6 +385,7 @@ switch ($_SERVER['REQUEST_METHOD'])
 				$response['list_id']		= $list_id;
 				$response['due_date']		= $due_date;
 				$response['note']			= $note;
+				$response['assign_to']		= $assign_to;
 				$response['is_completed']	= $completed;
 				echo json_encode($response);
 
